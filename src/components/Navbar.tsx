@@ -47,7 +47,7 @@ export default function Navbar() {
         {/* Right: Actions */}
         <div className="hidden md:flex items-center gap-5">
           {/* Stars */}
-          <div className="flex items-center gap-1.5 text-sm font-medium text-gray-300">
+          {/* <div className="flex items-center gap-1.5 text-sm font-medium text-gray-300">
             <svg
               className="w-4 h-4 text-gray-400"
               fill="none"
@@ -62,11 +62,11 @@ export default function Navbar() {
               ></path>
             </svg>
             <span>1.2k</span>
-          </div>
+          </div> */}
 
           {/* GitHub Button */}
           <a
-            href="https://github.com"
+            href="https://github.com/heroamogs/flowstride-os"
             target="_blank"
             rel="noreferrer"
             className="flex items-center gap-2 text-sm font-medium text-gray-300 hover:text-white bg-gray-900 border border-gray-700 hover:border-gray-500 transition-all px-3 py-1.5 rounded-md"
