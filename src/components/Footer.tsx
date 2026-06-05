@@ -52,8 +52,15 @@ export default function Footer() {
             <div className="flex flex-col gap-4">
               <h4 className="text-white font-semibold text-sm">Resources</h4>
               <ul className="flex flex-col gap-3 text-sm text-gray-400">
-                <li className="hover:text-white transition-colors cursor-pointer">
-                  Documentation
+                <li>
+                  <a
+                    href="https://docs.flowstride.io/guide/getting-started.html"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-white transition-colors cursor-pointer block"
+                  >
+                    Documentation
+                  </a>
                 </li>
                 <li className="hover:text-white transition-colors cursor-pointer">
                   Blog
@@ -71,8 +78,15 @@ export default function Footer() {
             <div className="flex flex-col gap-4">
               <h4 className="text-white font-semibold text-sm">Community</h4>
               <ul className="flex flex-col gap-3 text-sm text-gray-400">
-                <li className="hover:text-white transition-colors cursor-pointer">
-                  GitHub
+                <li>
+                  <a
+                    href="https://github.com/heroamogs/flowstride-os"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-white transition-colors cursor-pointer"
+                  >
+                    GitHub
+                  </a>
                 </li>
                 <li className="hover:text-white transition-colors cursor-pointer">
                   Discord

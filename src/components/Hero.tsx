@@ -29,9 +29,17 @@ export default function Hero() {
             <button className="bg-primary hover:bg-primary-light transition-colors text-white px-6 py-3 rounded-md font-semibold flex items-center justify-center gap-2">
               Get Started <span aria-hidden="true">&rarr;</span>
             </button>
-            <button className="bg-transparent border border-gray-700 hover:bg-gray-900 transition-colors text-white px-6 py-3 rounded-md font-semibold">
+            <a
+              href="https://github.com/heroamogs/flowstride-os"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-transparent border border-gray-700 hover:bg-gray-900 transition-colors text-white px-6 py-3 rounded-md font-semibold inline-block text-center"
+            >
               View Documentation
-            </button>
+            </a>
+            {/* <button className="bg-transparent border border-gray-700 hover:bg-gray-900 transition-colors text-white px-6 py-3 rounded-md font-semibold">
+              View Documentation
+            </button> */}
           </div>
 
           {/* Install Command */}
