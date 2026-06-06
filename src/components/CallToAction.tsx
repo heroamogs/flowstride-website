@@ -157,7 +157,11 @@ export default function CallToAction() {
 
             {/* Right Side: Action Buttons */}
             <div className="flex flex-col sm:flex-row items-center gap-4 w-full xl:w-auto">
-              <button className="w-full sm:w-auto px-8 py-3 bg-primary hover:bg-primary/90 text-white rounded-lg font-medium transition-colors flex items-center justify-center gap-2 cursor-pointer">
+              <a
+                href="https://www.npmjs.com/package/flowstride"
+                target="_blank"
+                className="w-full sm:w-auto px-8 py-3 bg-primary hover:bg-primary/90 text-white rounded-lg font-medium transition-colors flex items-center justify-center gap-2 cursor-pointer"
+              >
                 Get Started
                 <svg
                   className="w-4 h-4"
@@ -172,7 +176,7 @@ export default function CallToAction() {
                     d="M14 5l7 7m0 0l-7 7m7-7H3"
                   />
                 </svg>
-              </button>
+              </a>
               <a
                 href="https://docs.flowstride.io/guide/getting-started.html"
                 target="_blank"

@@ -1,6 +1,21 @@
+"use client";
+
+import { useState } from "react";
 import Image from "next/image";
 
 export default function Hero() {
+  const [isCopied, setIsCopied] = useState(false);
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText("npm install -g flowstride");
+      setIsCopied(true);
+      setTimeout(() => setIsCopied(false), 2000);
+    } catch (err) {
+      console.error("Failed to copy text: ", err);
+    }
+  };
+
   return (
     <section className="relative pt-24 pb-32 overflow-hidden bg-black text-white border-b border-gray-800">
       {/* Background Glow */}
@@ -26,9 +41,14 @@ export default function Hero() {
 
           {/* Buttons */}
           <div className="flex flex-col sm:flex-row gap-4">
-            <button className="bg-primary hover:bg-primary-light transition-colors text-white px-6 py-3 rounded-md font-semibold flex items-center justify-center gap-2">
+            <a
+              href="https://www.npmjs.com/package/flowstride"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-primary hover:bg-primary-light transition-colors text-white px-6 py-3 rounded-md font-semibold flex items-center justify-center gap-2"
+            >
               Get Started <span aria-hidden="true">&rarr;</span>
-            </button>
+            </a>
             <a
               href="https://github.com/heroamogs/flowstride-os"
               target="_blank"
@@ -37,9 +57,6 @@ export default function Hero() {
             >
               View Documentation
             </a>
-            {/* <button className="bg-transparent border border-gray-700 hover:bg-gray-900 transition-colors text-white px-6 py-3 rounded-md font-semibold">
-              View Documentation
-            </button> */}
           </div>
 
           {/* Install Command */}
@@ -48,21 +65,49 @@ export default function Hero() {
               <code className="text-sm text-gray-300 font-mono">
                 npm install -g flowstride
               </code>
-              <button className="bg-primary/20 text-primary hover:bg-primary text-xs px-3 py-1.5 rounded transition-colors flex items-center gap-2">
-                <svg
-                  className="w-3 h-3"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
-                  ></path>
-                </svg>
-                Copied!
+              <button
+                onClick={handleCopy}
+                className={`text-xs px-3 py-1.5 rounded transition-colors flex items-center gap-2 border ${
+                  isCopied
+                    ? "bg-primary/20 text-primary border-transparent hover:bg-primary hover:text-white"
+                    : "bg-transparent text-gray-300 border-gray-700 hover:bg-gray-800 hover:text-white"
+                }`}
+              >
+                {isCopied ? (
+                  <>
+                    <svg
+                      className="w-3 h-3"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M5 13l4 4L19 7"
+                      ></path>
+                    </svg>
+                    Copied!
+                  </>
+                ) : (
+                  <>
+                    <svg
+                      className="w-3 h-3"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                      ></path>
+                    </svg>
+                    Copy
+                  </>
+                )}
               </button>
             </div>
 

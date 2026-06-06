@@ -64,12 +64,14 @@ export default function Navbar() {
           </a>
 
           {/* Primary CTA */}
-          <Link
-            href="/get-started"
+          <a
+            href="https://www.npmjs.com/package/flowstride"
+            target="_blank"
+            rel="noopener noreferrer"
             className="bg-primary hover:bg-primary-light transition-colors text-white px-4 py-2 rounded-md text-sm font-medium flex items-center gap-1"
           >
             Get Started <span aria-hidden="true">&rarr;</span>
-          </Link>
+          </a>
         </div>
       </div>
     </header>
