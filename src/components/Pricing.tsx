@@ -81,7 +81,7 @@ export default function Pricing() {
               <span className="text-gray-500 ml-2">/ month</span>
             </div>
             <a
-              href="http://localhost:3000/register?plan=personal"
+              href="https://cloud.flowstride.io/register?plan=personal"
               className="w-full block text-center py-3 px-4 rounded-lg bg-slate-800 text-white font-medium hover:bg-slate-700 transition-colors mb-8 border border-slate-700"
             >
               Get Started Free
@@ -133,7 +133,7 @@ export default function Pricing() {
             {!isAnnual && <div className="h-[20px] mb-4" />}{" "}
             {/* Spacer for alignment */}
             <a
-              href="http://localhost:3000/register?plan=team"
+              href="https://cloud.flowstride.io/register?plan=team"
               className="w-full block text-center py-3 px-4 rounded-lg bg-indigo-600 text-white font-medium hover:bg-indigo-500 transition-colors mb-8 shadow-lg shadow-indigo-500/25"
             >
               Start Team Plan
@@ -196,7 +196,7 @@ export default function Pricing() {
             {!isAnnual && <div className="h-[20px] mb-4" />}{" "}
             {/* Spacer for alignment */}
             <a
-              href="http://localhost:3000/register?plan=business"
+              href="https://cloud.flowstride.io/register?plan=business"
               className="w-full block text-center py-3 px-4 rounded-lg bg-slate-800 text-white font-medium hover:bg-slate-700 transition-colors mb-8 border border-slate-700"
             >
               Start Business Plan
