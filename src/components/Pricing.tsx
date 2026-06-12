@@ -150,7 +150,7 @@ export default function Pricing() {
                   <CheckIcon /> AI Auto-Healing Engine
                 </li>
                 <li className="flex items-center">
-                  <CheckIcon /> Unlimited Email OTPs
+                  <CheckIcon /> Unlimited Email OTP Automations
                 </li>
                 <li className="flex items-center">
                   <CheckIcon /> Cloud Execution
