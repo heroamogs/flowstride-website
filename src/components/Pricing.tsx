@@ -17,6 +17,12 @@ const CheckIcon = () => (
 export default function Pricing() {
   const [isAnnual, setIsAnnual] = useState(false);
 
+  // Helper to generate the correct registration link
+  const getRegisterLink = (plan: string) => {
+    const billingCycle = isAnnual ? "annual" : "monthly";
+    return `https://cloud.flowstride.io/register?plan=${plan}&billing=${billingCycle}`;
+  };
+
   return (
     <section
       className="py-24 bg-[#0B0A0F] text-white relative overflow-hidden"
@@ -74,14 +80,14 @@ export default function Pricing() {
           <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-8 hover:border-slate-700 transition-colors flex flex-col">
             <h4 className="text-xl font-semibold text-white mb-2">Personal</h4>
             <p className="text-gray-400 text-sm mb-6">
-              For individuals and small teams exploring Flowstride.
+              Solo Devs & Hobbyists exploring Flowstride.
             </p>
             <div className="mb-6">
               <span className="text-4xl font-bold text-white">$0</span>
               <span className="text-gray-500 ml-2">/ month</span>
             </div>
             <a
-              href="https://cloud.flowstride.io/register?plan=personal"
+              href={getRegisterLink("personal")}
               className="w-full block text-center py-3 px-4 rounded-lg bg-slate-800 text-white font-medium hover:bg-slate-700 transition-colors mb-8 border border-slate-700"
             >
               Get Started Free
@@ -90,22 +96,22 @@ export default function Pricing() {
               <p className="text-sm font-medium text-white mb-4">Includes:</p>
               <ul className="space-y-3 text-sm text-gray-300">
                 <li className="flex items-center">
-                  <CheckIcon /> Up to 70 Users
+                  <CheckIcon /> Up to 3 Users (Seats)
                 </li>
                 <li className="flex items-center">
                   <CheckIcon /> 1,000 test runs / month
                 </li>
                 <li className="flex items-center">
-                  <CheckIcon /> 100 Email OTP Automations
+                  <CheckIcon /> Up to 3 Parallel Workers
                 </li>
                 <li className="flex items-center">
-                  <CheckIcon /> Standard Support
+                  <CheckIcon /> 200 Email OTPs / month
                 </li>
                 <li className="flex items-center">
-                  <CheckIcon /> Local Execution
+                  <CheckIcon /> Local Video Only
                 </li>
                 <li className="flex items-center">
-                  <CheckIcon /> CLI Integration to Cloud
+                  <CheckIcon /> 14-Day Log Retention
                 </li>
               </ul>
             </div>
@@ -115,7 +121,7 @@ export default function Pricing() {
           <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-8 hover:border-slate-700 transition-colors flex flex-col">
             <h4 className="text-xl font-semibold text-white mb-2">Team</h4>
             <p className="text-gray-400 text-sm mb-6">
-              For growing teams optimizing their QA velocity.
+              Small QA Teams optimizing their velocity.
             </p>
             <div className="mb-2">
               <span className="text-4xl font-bold text-white">
@@ -130,10 +136,9 @@ export default function Pricing() {
                 Save $300 upfront
               </p>
             )}
-            {!isAnnual && <div className="h-[20px] mb-4" />}{" "}
-            {/* Spacer for alignment */}
+            {!isAnnual && <div className="h-[20px] mb-4" />}
             <a
-              href="https://cloud.flowstride.io/register?plan=team"
+              href={getRegisterLink("team")}
               className="w-full block text-center py-3 px-4 rounded-lg bg-indigo-600 text-white font-medium hover:bg-indigo-500 transition-colors mb-8 shadow-lg shadow-indigo-500/25"
             >
               Start Team Plan
@@ -144,28 +149,22 @@ export default function Pricing() {
               </p>
               <ul className="space-y-3 text-sm text-gray-300">
                 <li className="flex items-center">
+                  <CheckIcon /> Up to 15 Users (Seats)
+                </li>
+                <li className="flex items-center">
                   <CheckIcon /> 20,000 test runs / month
+                </li>
+                <li className="flex items-center">
+                  <CheckIcon /> Up to 5 Parallel Workers
+                </li>
+                <li className="flex items-center">
+                  <CheckIcon /> Unlimited Email OTPs
                 </li>
                 <li className="flex items-center">
                   <CheckIcon /> AI Auto-Healing Engine
                 </li>
                 <li className="flex items-center">
-                  <CheckIcon /> Unlimited Email OTP Automations
-                </li>
-                <li className="flex items-center">
-                  <CheckIcon /> Cloud Execution
-                </li>
-                <li className="flex items-center">
-                  <CheckIcon /> Parallel Execution
-                </li>
-                <li className="flex items-center">
-                  <CheckIcon /> Slack Integration
-                </li>
-                <li className="flex items-center">
-                  <CheckIcon /> Jira Integration
-                </li>
-                <li className="flex items-center">
-                  <CheckIcon /> Priority Support
+                  <CheckIcon /> 30-Day Log Retention
                 </li>
               </ul>
             </div>
@@ -178,7 +177,7 @@ export default function Pricing() {
             </div>
             <h4 className="text-xl font-semibold text-white mb-2">Business</h4>
             <p className="text-gray-400 text-sm mb-6">
-              For organizations executing testing at scale.
+              Scaling Orgs executing testing at scale.
             </p>
             <div className="mb-2">
               <span className="text-4xl font-bold text-white">
@@ -193,10 +192,9 @@ export default function Pricing() {
                 Save $1,500 upfront
               </p>
             )}
-            {!isAnnual && <div className="h-[20px] mb-4" />}{" "}
-            {/* Spacer for alignment */}
+            {!isAnnual && <div className="h-[20px] mb-4" />}
             <a
-              href="https://cloud.flowstride.io/register?plan=business"
+              href={getRegisterLink("business")}
               className="w-full block text-center py-3 px-4 rounded-lg bg-slate-800 text-white font-medium hover:bg-slate-700 transition-colors mb-8 border border-slate-700"
             >
               Start Business Plan
@@ -207,16 +205,22 @@ export default function Pricing() {
               </p>
               <ul className="space-y-3 text-sm text-gray-300">
                 <li className="flex items-center">
-                  <CheckIcon /> Up to 100 Users
+                  <CheckIcon /> Up to 70 Users (Seats)
                 </li>
                 <li className="flex items-center">
-                  <CheckIcon /> Unlimited test runs / month
+                  <CheckIcon /> 100,000 test runs / month
                 </li>
                 <li className="flex items-center">
-                  <CheckIcon /> Dedicated Cloud Infrastructure
+                  <CheckIcon /> Unlimited Parallel Workers
                 </li>
                 <li className="flex items-center">
-                  <CheckIcon /> Static IP Whitelisting
+                  <CheckIcon /> Cloud Video: 30 Days
+                </li>
+                <li className="flex items-center">
+                  <CheckIcon /> Flaky Test Analytics
+                </li>
+                <li className="flex items-center">
+                  <CheckIcon /> 6-Month Log Retention
                 </li>
               </ul>
             </div>
@@ -224,9 +228,7 @@ export default function Pricing() {
 
           {/* 4. Enterprise */}
           <div className="bg-[#0B0A0F] border border-slate-800 rounded-2xl p-8 flex flex-col relative overflow-hidden">
-            {/* Dark overlay to indicate "coming soon" state */}
             <div className="absolute inset-0 bg-slate-950/40 z-0 pointer-events-none"></div>
-
             <div className="relative z-10 flex flex-col h-full">
               <h4 className="text-xl font-semibold text-white mb-2 flex items-center justify-between">
                 Enterprise
@@ -248,20 +250,20 @@ export default function Pricing() {
               </button>
               <div className="flex-1">
                 <p className="text-sm font-medium text-white mb-4">
-                  Planned Features:
+                  Everything in Business, plus:
                 </p>
                 <ul className="space-y-3 text-sm text-gray-400">
                   <li className="flex items-center">
-                    <CheckIcon /> SSO / SAML Authentication
+                    <CheckIcon /> Unlimited Users & Runs
                   </li>
                   <li className="flex items-center">
-                    <CheckIcon /> Custom Invoicing & Contracts
+                    <CheckIcon /> Cloud Video: 90 Days
                   </li>
                   <li className="flex items-center">
-                    <CheckIcon /> Dedicated Account Manager
+                    <CheckIcon /> SSO / SAML
                   </li>
                   <li className="flex items-center">
-                    <CheckIcon /> On-Premise Deployment
+                    <CheckIcon /> Dedicated Infra & IPs
                   </li>
                 </ul>
               </div>
