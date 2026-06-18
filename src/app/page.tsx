@@ -4,7 +4,6 @@ import Features from "@/components/Features";
 import UnifiedTesting from "@/components/UnifiedTesting";
 import CallToAction from "@/components/CallToAction";
 import Footer from "@/components/Footer";
-import Pricing from "@/components/Pricing";
 
 export default function Home() {
   return (
@@ -13,7 +12,6 @@ export default function Home() {
       <Comparison />
       <Features />
       <UnifiedTesting />
-      <Pricing />
       <CallToAction />
       <Footer />
     </main>
