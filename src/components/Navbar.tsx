@@ -34,10 +34,14 @@ export default function Navbar() {
           >
             Docs
           </Link>
-          <Link href="pricing" className="hover:text-white transition-colors">
-            Pricing
+          <Link
+            href="https://cloud.flowstride.io/register"
+            target="_blank"
+            className="hover:text-white transition-colors"
+          >
+            Cloud
           </Link>
-          <Link href="#blog" className="hover:text-white transition-colors">
+          {/* <Link href="#blog" className="hover:text-white transition-colors">
             Blog
           </Link>
           <Link
@@ -45,7 +49,7 @@ export default function Navbar() {
             className="hover:text-white transition-colors"
           >
             Changelog
-          </Link>
+          </Link> */}
         </nav>
 
         {/* Right: Actions */}

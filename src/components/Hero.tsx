@@ -50,7 +50,7 @@ export default function Hero() {
               Get Started <span aria-hidden="true">&rarr;</span>
             </a>
             <a
-              href="https://github.com/heroamogs/flowstride-os"
+              href="https://docs.flowstride.io/guide/getting-started.html"
               target="_blank"
               rel="noopener noreferrer"
               className="bg-transparent border border-gray-700 hover:bg-gray-900 transition-colors text-white px-6 py-3 rounded-md font-semibold inline-block text-center"
