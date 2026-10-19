@@ -43,7 +43,7 @@ export default function Features() {
     {
       title: "Unified Testing",
       description:
-        "UI and API testing in a single workflow with one unified dashboard.",
+        "Combine UI, API and browser-game checks in readable flows.",
       icon: (
         <svg
           className="w-6 h-6 text-primary"
@@ -63,7 +63,7 @@ export default function Features() {
     {
       title: "Human Readable",
       description:
-        "Tests that engineers, QA, and PMs can read, understand, and trust.",
+        "Readable flows with native canvas input and optional game-state assertions.",
       icon: (
         <svg
           className="w-6 h-6 text-primary"
@@ -83,7 +83,7 @@ export default function Features() {
     {
       title: "CI/CD Ready",
       description:
-        "Built for speed. Parallel execution, containers, and seamless integrations.",
+        "Run flows with native headless CI, exit codes, JSON/JUnit reports and retained evidence.",
       icon: (
         <svg
           className="w-6 h-6 text-primary"

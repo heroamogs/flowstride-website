@@ -39,3 +39,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Release checks
+development-audit.json
+runtime-audit.json
+*.tsbuildinfo
