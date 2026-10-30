@@ -43,3 +43,7 @@ next-env.d.ts
 dependency-audit.json
 
 test-results/
+
+# Release checks
+development-audit.json
+runtime-audit.json
