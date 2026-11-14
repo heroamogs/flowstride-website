@@ -260,7 +260,7 @@ export default function Pricing({
                     ))}
                   </ul>
                 )}
-                {id !== "enterprise" && catalog?.testCheckout && (
+                {id !== "enterprise" && (
                   <div className="mt-5 border-t border-slate-700 pt-4 text-sm leading-relaxed text-slate-400">
                     <p className="mb-1 font-medium text-slate-300">
                       Planned allowances per 30 days

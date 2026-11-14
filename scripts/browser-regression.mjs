@@ -116,6 +116,11 @@ for (const [name, engine] of Object.entries({chromium, firefox, webkit})) {
         await page.getByText('Personal', {exact:true}).waitFor();
         const team = page.getByRole('article', { name: 'Team', exact: true });
         const business = page.getByRole('article', { name: 'Business', exact: true });
+        const plannedAllowances = [
+          ['Personal', '1,000 runs reported to Cloud', '200 FlowMail OTP requests'],
+          ['Team', '20,000 runs reported to Cloud', '10,000 FlowMail OTP requests'],
+          ['Business', '100,000 runs reported to Cloud', '50,000 FlowMail OTP requests'],
+        ];
         for (const mode of ['off', 'test', 'live']) {
           checkoutMode = mode;
           assert((await page.reload()).ok());
@@ -127,9 +132,19 @@ for (const [name, engine] of Object.entries({chromium, firefox, webkit})) {
           assert(await business.getByText('₦1,870,500', { exact: true }).isVisible());
           assert(await team.getByText('Save ₦84,100/year on annual plan', { exact: true }).isVisible());
           assert.equal(await page.getByText(/Test Mode pricing preview|Checkout uses Flutterwave test payments/i).count(), 0);
+          for (const [plan, runs, otpRequests] of plannedAllowances) {
+            const card = page.getByRole('article', { name: plan, exact: true });
+            assert(await card.getByText('Planned allowances per 30 days', { exact: true }).isVisible());
+            assert(await card.getByText(runs, { exact: true }).isVisible());
+            assert(await card.getByText(otpRequests, { exact: true }).isVisible());
+          }
+          const enterprise = page.getByRole('article', { name: 'Enterprise', exact: true });
+          assert.equal(await enterprise.getByText('Planned allowances per 30 days', { exact: true }).count(), 0);
           if (mode === 'off') {
-            assert(await team.getByText('Checkout paused', { exact: true }).isVisible());
-            assert.equal(await team.getByRole('link').count(), 0);
+            for (const card of [team, business]) {
+              assert(await card.getByText('Checkout paused', { exact: true }).isVisible());
+              assert.equal(await card.getByRole('link').count(), 0);
+            }
           } else {
             const name = mode === 'live' ? 'Start Team Plan' : 'Test Team checkout';
             const href = await team.getByRole('link', { name, exact: true }).getAttribute('href');
