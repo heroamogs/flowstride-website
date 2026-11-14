@@ -13,6 +13,7 @@ const tools = process.env.FLOWSTRIDE_BROWSER_TOOLS;
 assert(tools, 'Set FLOWSTRIDE_BROWSER_TOOLS to the isolated Playwright package directory.');
 const { chromium, firefox, webkit } = createRequire(path.join(path.resolve(tools), 'package.json'))('playwright');
 let origin, server, child, output = '';
+let catalogServer, catalogOrigin, checkoutMode = 'off';
 
 before(async () => {
   if (docs) {
@@ -34,11 +35,29 @@ before(async () => {
     server.listen(0, '127.0.0.1'); await once(server, 'listening');
     origin = `http://127.0.0.1:${server.address().port}`;
   } else {
+    catalogServer = createServer((request, response) => {
+      if (request.url !== '/api/billing/catalog') return response.writeHead(404).end();
+      response.setHeader('Content-Type', 'application/json');
+      response.end(JSON.stringify({
+        checkoutMode,
+        testCheckout: checkoutMode === 'test',
+        markets: [{ currency: 'NGN', country: 'NG', label: 'Nigerian Naira' }],
+        offers: [
+          { id: 'team-monthly', currency: 'NGN', amountMinor: 4_205_000 },
+          { id: 'team-annual', currency: 'NGN', amountMinor: 42_050_000 },
+          { id: 'business-monthly', currency: 'NGN', amountMinor: 18_705_000 },
+          { id: 'business-annual', currency: 'NGN', amountMinor: 187_050_000 },
+        ],
+      }));
+    });
+    catalogServer.listen(0, '127.0.0.1');
+    await once(catalogServer, 'listening');
+    catalogOrigin = `http://127.0.0.1:${catalogServer.address().port}`;
     const reserve = createServer(); reserve.listen(0, '127.0.0.1'); await once(reserve, 'listening');
     const port = reserve.address().port; await new Promise(resolve => reserve.close(resolve));
     origin = `http://127.0.0.1:${port}`;
     child = spawn(process.execPath, ['node_modules/next/dist/bin/next', 'start', '--hostname', '127.0.0.1', '--port', String(port)],
-      { cwd:root, env:{...process.env, NEXT_TELEMETRY_DISABLED:'1'}, stdio:['ignore','pipe','pipe'] });
+      { cwd:root, env:{...process.env, NEXT_TELEMETRY_DISABLED:'1', FLOWSTRIDE_CLOUD_ORIGIN:catalogOrigin}, stdio:['ignore','pipe','pipe'] });
     child.stdout.on('data', data => output += data); child.stderr.on('data', data => output += data);
     let ready = false;
     for (let attempt = 0; attempt < 120 && !ready; attempt++) {
@@ -53,6 +72,7 @@ before(async () => {
 after(async () => {
   if (child && child.exitCode === null) { child.kill('SIGTERM'); await once(child, 'close'); }
   if (server) { server.closeAllConnections(); await new Promise(resolve => server.close(resolve)); }
+  if (catalogServer) { catalogServer.closeAllConnections(); await new Promise(resolve => catalogServer.close(resolve)); }
 });
 
 for (const [name, engine] of Object.entries({chromium, firefox, webkit})) {
@@ -60,7 +80,7 @@ for (const [name, engine] of Object.entries({chromium, firefox, webkit})) {
     const browser = await engine.launch({ headless:true });
     try {
       const context = await browser.newContext({ viewport:{width:1440,height:1000} });
-      // Keep acceptance local: never call Cloud, payment providers, analytics or CDNs.
+      // Browser requests stay local. Next.js uses the disposable catalog server above.
       await context.route('**/*', route => new URL(route.request().url()).origin === origin ? route.continue() : route.abort());
       const page = await context.newPage(), errors = [];
       page.on('pageerror', error => errors.push(error.message));
@@ -94,6 +114,28 @@ for (const [name, engine] of Object.entries({chromium, firefox, webkit})) {
         assert.equal(denied.status(), 400);
         assert((await page.goto(origin + '/pricing')).ok());
         await page.getByText('Personal', {exact:true}).waitFor();
+        const team = page.getByRole('article', { name: 'Team', exact: true });
+        const business = page.getByRole('article', { name: 'Business', exact: true });
+        for (const mode of ['off', 'test', 'live']) {
+          checkoutMode = mode;
+          assert((await page.reload()).ok());
+          await page.getByLabel('Currency', { exact: true }).selectOption('NGN');
+          assert(await team.getByText('₦42,050', { exact: true }).isVisible());
+          assert(await business.getByText('₦187,050', { exact: true }).isVisible());
+          await page.getByRole('button', { name: 'Yearly', exact: true }).click();
+          assert(await team.getByText('₦420,500', { exact: true }).isVisible());
+          assert(await business.getByText('₦1,870,500', { exact: true }).isVisible());
+          assert(await team.getByText('Save ₦84,100/year on annual plan', { exact: true }).isVisible());
+          assert.equal(await page.getByText(/Test Mode pricing preview|Checkout uses Flutterwave test payments/i).count(), 0);
+          if (mode === 'off') {
+            assert(await team.getByText('Checkout paused', { exact: true }).isVisible());
+            assert.equal(await team.getByRole('link').count(), 0);
+          } else {
+            const name = mode === 'live' ? 'Start Team Plan' : 'Test Team checkout';
+            const href = await team.getByRole('link', { name, exact: true }).getAttribute('href');
+            assert.equal(href, catalogOrigin + '/billing/checkout?plan=team&billing=annual&currency=NGN');
+          }
+        }
         assert.equal((await context.request.get(origin + '/not-a-real-route')).status(), 404);
       }
       await page.setViewportSize({width:390,height:844});

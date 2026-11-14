@@ -35,11 +35,12 @@ export default function Navbar() {
             Docs
           </Link>
           <Link
-            href="https://cloud.flowstride.io/register"
+            // href="https://cloud.flowstride.io/register"
+            href="/pricing"
             target="_blank"
             className="hover:text-white transition-colors"
           >
-            Cloud
+            Pricing
           </Link>
           {/* <Link href="#blog" className="hover:text-white transition-colors">
             Blog
