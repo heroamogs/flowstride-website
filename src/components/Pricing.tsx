@@ -2,9 +2,86 @@
 
 import { useState } from "react";
 
+type Currency = "USD" | "NGN" | "GHS" | "KES";
+type Cycle = "monthly" | "annual";
+type Plan = "personal" | "team" | "business" | "enterprise";
+
+export type PricingCatalog = {
+  offers: {
+    id: `${"team" | "business"}-${Cycle}`;
+    currency: Currency;
+    amountMinor: number;
+  }[];
+  markets: { currency: Currency; country: string | null; label: string }[];
+  testCheckout: boolean;
+  checkoutMode?: "test" | "live" | "off";
+};
+
+const plans: {
+  id: Plan;
+  name: string;
+  description: string;
+  features: string[];
+}[] = [
+  {
+    id: "personal",
+    name: "Personal",
+    description:
+      "For individuals and small workspaces getting started with Cloud.",
+    features: [
+      "Up to 3 seats",
+      "Up to 3 parallel workers",
+      "14-day test log retention",
+    ],
+  },
+  {
+    id: "team",
+    name: "Team",
+    description: "For QA teams running more tests and sharing results.",
+    features: [
+      "Up to 15 seats",
+      "Up to 5 parallel workers",
+      "30-day test log retention",
+    ],
+  },
+  {
+    id: "business",
+    name: "Business",
+    description:
+      "For larger teams that need more seats and longer evidence retention.",
+    features: [
+      "Up to 70 seats",
+      "Failed-run videos kept for 30 days",
+      "180-day test log retention",
+    ],
+  },
+  {
+    id: "enterprise",
+    name: "Enterprise",
+    description: "Custom deployment, security and support.",
+    features: [],
+  },
+];
+
+const plannedAllowances = {
+  personal: ["1,000 runs reported to Cloud", "200 FlowMail OTP requests"],
+  team: ["20,000 runs reported to Cloud", "10,000 FlowMail OTP requests"],
+  business: ["100,000 runs reported to Cloud", "50,000 FlowMail OTP requests"],
+};
+
+function formatPrice(amountMinor: number, currency: Currency) {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency,
+    currencyDisplay: "narrowSymbol",
+    minimumFractionDigits: 0,
+  }).format(amountMinor / 100);
+}
+
 const CheckIcon = () => (
   <svg
-    className="w-5 h-5 text-indigo-400 flex-shrink-0 mr-3"
+    aria-hidden="true"
+    className="mr-3 h-5 w-5 shrink-0 text-indigo-400"
     fill="none"
     viewBox="0 0 24 24"
     stroke="currentColor"
@@ -14,261 +91,190 @@ const CheckIcon = () => (
   </svg>
 );
 
-export default function Pricing() {
-  const [isAnnual, setIsAnnual] = useState(false);
-
-  // Helper to generate the correct registration link
-  const getRegisterLink = (plan: string) => {
-    const billingCycle = isAnnual ? "annual" : "monthly";
-    return `https://cloud.flowstride.io/register?plan=${plan}&billing=${billingCycle}`;
-  };
+export default function Pricing({
+  cloudOrigin,
+  catalog,
+  defaultCurrency,
+}: {
+  cloudOrigin: string;
+  catalog: PricingCatalog | null;
+  defaultCurrency: Currency;
+}) {
+  const [cycle, setCycle] = useState<Cycle>("monthly");
+  const [currency, setCurrency] = useState(defaultCurrency);
+  const yearly = cycle === "annual";
+  const checkoutMode = catalog?.checkoutMode ?? (catalog?.testCheckout ? "test" : "off");
 
   return (
     <section
-      className="py-24 bg-[#0B0A0F] text-white relative overflow-hidden"
+      className="relative overflow-hidden bg-[#0B0A0F] py-24 text-white"
       id="pricing"
     >
-      {/* Background Glow Elements */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-indigo-600/20 blur-[120px] rounded-full pointer-events-none" />
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <h2 className="text-indigo-400 font-semibold tracking-wide uppercase text-sm mb-3">
-            Pricing
-          </h2>
-          <h3 className="text-3xl md:text-5xl font-bold mb-6 tracking-tight">
-            Uncompromising power.
-            <br />
-            Priced for everyone.
-          </h3>
-          <p className="text-gray-400 text-lg">
-            Start automating in minutes. Upgrade when your team needs more
-            scale.
+      <div className="pointer-events-none absolute top-0 left-1/2 h-[400px] w-[800px] -translate-x-1/2 rounded-full bg-indigo-600/20 blur-[120px]" />
+      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto mb-12 max-w-3xl text-center">
+          <h1 className="mb-4 text-3xl font-bold tracking-tight md:text-5xl">
+            Flowstride Cloud pricing
+          </h1>
+          <p className="text-lg text-gray-400">
+            Start free and upgrade when your workspace needs more capacity.
           </p>
-
-          {/* Billing Toggle */}
-          <div className="mt-10 flex items-center justify-center gap-4">
-            <span
-              className={`text-sm ${!isAnnual ? "text-white font-medium" : "text-gray-400"}`}
-            >
-              Monthly
-            </span>
-            <button
-              onClick={() => setIsAnnual(!isAnnual)}
-              className="relative inline-flex h-7 w-14 items-center rounded-full bg-slate-800 border border-slate-700 transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-[#0B0A0F]"
-            >
-              <span
-                className={`inline-block h-5 w-5 transform rounded-full bg-indigo-500 transition-transform duration-200 ease-in-out ${
-                  isAnnual ? "translate-x-8" : "translate-x-1"
-                }`}
-              />
-            </button>
-            <span
-              className={`text-sm flex items-center gap-2 ${isAnnual ? "text-white font-medium" : "text-gray-400"}`}
-            >
-              Special Offer
-              <span className="inline-block px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 text-xs font-semibold border border-indigo-500/30">
-                18 Months!
-              </span>
-            </span>
-          </div>
+          {catalog && (
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
+              <div
+                role="group"
+                aria-label="Billing term"
+                className="inline-flex rounded-lg border border-slate-700 bg-slate-900 p-1"
+              >
+                {(["monthly", "annual"] as const).map((option) => (
+                  <button
+                    type="button"
+                    key={option}
+                    aria-pressed={cycle === option}
+                    onClick={() => setCycle(option)}
+                    className={`rounded-md px-4 py-2 text-sm font-medium focus-visible:outline-2 focus-visible:outline-indigo-300 ${cycle === option ? "bg-indigo-600 text-white" : "text-slate-300 hover:text-white"}`}
+                  >
+                    {option === "annual" ? "Yearly" : "Monthly"}
+                  </button>
+                ))}
+              </div>
+              <div className="flex items-center gap-2 text-sm font-medium text-slate-300">
+                <label htmlFor="pricing-currency">Currency</label>
+                <select
+                  id="pricing-currency"
+                  value={currency}
+                  onChange={(event) =>
+                    setCurrency(event.target.value as Currency)
+                  }
+                  className="rounded-lg border border-slate-700 bg-slate-900 px-3 py-2.5 text-white focus-visible:outline-2 focus-visible:outline-indigo-300"
+                >
+                  {catalog.markets.map((market) => (
+                    <option value={market.currency} key={market.currency}>
+                      {market.currency} · {market.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+          )}
         </div>
 
-        {/* Pricing Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 xl:gap-8">
-          {/* 1. Personal (Free) */}
-          <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-8 hover:border-slate-700 transition-colors flex flex-col">
-            <h4 className="text-xl font-semibold text-white mb-2">Personal</h4>
-            <p className="text-gray-400 text-sm mb-6">
-              Solo Devs & Hobbyists exploring Flowstride.
-            </p>
-            <div className="mb-6">
-              <span className="text-4xl font-bold text-white">$0</span>
-              <span className="text-gray-500 ml-2">/ month</span>
-            </div>
-            <a
-              href={getRegisterLink("personal")}
-              className="w-full block text-center py-3 px-4 rounded-lg bg-slate-800 text-white font-medium hover:bg-slate-700 transition-colors mb-8 border border-slate-700"
-            >
-              Get Started Free
-            </a>
-            <div className="flex-1">
-              <p className="text-sm font-medium text-white mb-4">Includes:</p>
-              <ul className="space-y-3 text-sm text-gray-300">
-                <li className="flex items-center">
-                  <CheckIcon /> Up to 3 Users (Seats)
-                </li>
-                <li className="flex items-center">
-                  <CheckIcon /> 1,000 test runs / month
-                </li>
-                <li className="flex items-center">
-                  <CheckIcon /> Up to 3 Parallel Workers
-                </li>
-                <li className="flex items-center">
-                  <CheckIcon /> 200 Email OTPs / month
-                </li>
-                <li className="flex items-center">
-                  <CheckIcon /> Local Video Only
-                </li>
-                <li className="flex items-center">
-                  <CheckIcon /> 14-Day Log Retention
-                </li>
-              </ul>
-            </div>
-          </div>
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4 xl:gap-8">
+          {plans.map(({ id, name, description, features }) => {
+            const paid = id === "team" || id === "business";
+            const price = catalog?.offers.find(
+              (offer) =>
+                offer.id === `${id}-${cycle}` && offer.currency === currency,
+            );
+            const monthly = catalog?.offers.find(
+              (offer) =>
+                offer.id === `${id}-monthly` && offer.currency === currency,
+            );
+            const savings =
+              yearly && price && monthly
+                ? monthly.amountMinor * 12 - price.amountMinor
+                : 0;
+            const amount =
+              id === "personal"
+                ? formatPrice(0, currency)
+                : id === "enterprise"
+                  ? "Custom"
+                  : price
+                    ? formatPrice(price.amountMinor, currency)
+                    : "Pricing unavailable";
+            const checkout = new URL("/billing/checkout", cloudOrigin);
+            checkout.search = new URLSearchParams({
+              plan: id,
+              billing: cycle,
+              currency,
+            }).toString();
+            const button =
+              "mb-6 block w-full rounded-lg px-4 py-3 text-center text-sm font-medium focus-visible:outline-2 focus-visible:outline-indigo-300";
 
-          {/* 2. Team */}
-          <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-8 hover:border-slate-700 transition-colors flex flex-col">
-            <h4 className="text-xl font-semibold text-white mb-2">Team</h4>
-            <p className="text-gray-400 text-sm mb-6">
-              Small QA Teams optimizing their velocity.
-            </p>
-            <div className="mb-2">
-              <span className="text-4xl font-bold text-white">
-                {isAnnual ? "$600" : "$50"}
-              </span>
-              <span className="text-gray-500 ml-2">
-                {isAnnual ? "/ 18 months" : "/ month"}
-              </span>
-            </div>
-            {isAnnual && (
-              <p className="text-emerald-400 text-sm mb-4 font-medium">
-                Save $300 upfront
-              </p>
-            )}
-            {!isAnnual && <div className="h-[20px] mb-4" />}
-            <a
-              href={getRegisterLink("team")}
-              className="w-full block text-center py-3 px-4 rounded-lg bg-indigo-600 text-white font-medium hover:bg-indigo-500 transition-colors mb-8 shadow-lg shadow-indigo-500/25"
-            >
-              Start Team Plan
-            </a>
-            <div className="flex-1">
-              <p className="text-sm font-medium text-white mb-4">
-                Everything in Personal, plus:
-              </p>
-              <ul className="space-y-3 text-sm text-gray-300">
-                <li className="flex items-center">
-                  <CheckIcon /> Up to 15 Users (Seats)
-                </li>
-                <li className="flex items-center">
-                  <CheckIcon /> 20,000 test runs / month
-                </li>
-                <li className="flex items-center">
-                  <CheckIcon /> Up to 5 Parallel Workers
-                </li>
-                <li className="flex items-center">
-                  <CheckIcon /> Unlimited Email OTPs
-                </li>
-                <li className="flex items-center">
-                  <CheckIcon /> AI Auto-Healing Engine
-                </li>
-                <li className="flex items-center">
-                  <CheckIcon /> 30-Day Log Retention
-                </li>
-              </ul>
-            </div>
-          </div>
-
-          {/* 3. Business */}
-          <div className="bg-indigo-900/10 border-2 border-indigo-500 rounded-2xl p-8 relative shadow-[0_0_40px_rgba(99,102,241,0.15)] flex flex-col transform md:-translate-y-2">
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-indigo-500 text-white px-3 py-1 rounded-full text-xs font-bold tracking-wider uppercase shadow-lg">
-              BEST VALUE
-            </div>
-            <h4 className="text-xl font-semibold text-white mb-2">Business</h4>
-            <p className="text-gray-400 text-sm mb-6">
-              Scaling Orgs executing testing at scale.
-            </p>
-            <div className="mb-2">
-              <span className="text-4xl font-bold text-white">
-                {isAnnual ? "$3,000" : "$250"}
-              </span>
-              <span className="text-gray-500 ml-2">
-                {isAnnual ? "/ 18 months" : "/ month"}
-              </span>
-            </div>
-            {isAnnual && (
-              <p className="text-emerald-400 text-sm mb-4 font-medium">
-                Save $1,500 upfront
-              </p>
-            )}
-            {!isAnnual && <div className="h-[20px] mb-4" />}
-            <a
-              href={getRegisterLink("business")}
-              className="w-full block text-center py-3 px-4 rounded-lg bg-slate-800 text-white font-medium hover:bg-slate-700 transition-colors mb-8 border border-slate-700"
-            >
-              Start Business Plan
-            </a>
-            <div className="flex-1">
-              <p className="text-sm font-medium text-white mb-4">
-                Everything in Team, plus:
-              </p>
-              <ul className="space-y-3 text-sm text-gray-300">
-                <li className="flex items-center">
-                  <CheckIcon /> Up to 70 Users (Seats)
-                </li>
-                <li className="flex items-center">
-                  <CheckIcon /> 100,000 test runs / month
-                </li>
-                <li className="flex items-center">
-                  <CheckIcon /> Unlimited Parallel Workers
-                </li>
-                <li className="flex items-center">
-                  <CheckIcon /> Cloud Video: 30 Days
-                </li>
-                <li className="flex items-center">
-                  <CheckIcon /> Flaky Test Analytics
-                </li>
-                <li className="flex items-center">
-                  <CheckIcon /> 6-Month Log Retention
-                </li>
-              </ul>
-            </div>
-          </div>
-
-          {/* 4. Enterprise */}
-          <div className="bg-[#0B0A0F] border border-slate-800 rounded-2xl p-8 flex flex-col relative overflow-hidden">
-            <div className="absolute inset-0 bg-slate-950/40 z-0 pointer-events-none"></div>
-            <div className="relative z-10 flex flex-col h-full">
-              <h4 className="text-xl font-semibold text-white mb-2 flex items-center justify-between">
-                Enterprise
-                <span className="text-[10px] uppercase tracking-wider bg-slate-800 text-slate-300 px-2 py-1 rounded">
-                  Coming Soon
-                </span>
-              </h4>
-              <p className="text-gray-400 text-sm mb-6">
-                Custom deployment, security, and dedicated support.
-              </p>
-              <div className="mb-6 mt-auto">
-                <span className="text-3xl font-bold text-white">Custom</span>
-              </div>
-              <button
-                disabled
-                className="w-full py-3 px-4 rounded-lg bg-slate-800/50 text-slate-400 font-medium cursor-not-allowed mb-8 border border-slate-800"
+            return (
+              <article
+                key={id}
+                aria-label={name}
+                className={`flex flex-col rounded-2xl border p-6 xl:p-8 ${id === "business" ? "border-indigo-500 bg-indigo-900/10" : "border-slate-800 bg-slate-900/50"}`}
               >
-                Join Waitlist
-              </button>
-              <div className="flex-1">
-                <p className="text-sm font-medium text-white mb-4">
-                  Everything in Business, plus:
+                <h2 className="mb-2 text-xl font-semibold">{name}</h2>
+                <p className="mb-6 text-sm leading-relaxed text-gray-400">
+                  {description}
                 </p>
-                <ul className="space-y-3 text-sm text-gray-400">
-                  <li className="flex items-center">
-                    <CheckIcon /> Unlimited Users & Runs
-                  </li>
-                  <li className="flex items-center">
-                    <CheckIcon /> Cloud Video: 90 Days
-                  </li>
-                  <li className="flex items-center">
-                    <CheckIcon /> SSO / SAML
-                  </li>
-                  <li className="flex items-center">
-                    <CheckIcon /> Dedicated Infra & IPs
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
+                <div className="mt-auto mb-4">
+                  <p className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
+                    <span
+                      className={
+                        paid && !price
+                          ? "text-xl font-bold"
+                          : "text-3xl font-bold"
+                      }
+                    >
+                      {amount}
+                    </span>
+                    {(id === "personal" || price) && (
+                      <span className="text-sm text-gray-400">
+                        / {paid && yearly ? "year" : "month"}
+                      </span>
+                    )}
+                  </p>
+                  {savings > 0 && (
+                    <p className="mt-2 text-sm text-emerald-400">
+                      Save {formatPrice(savings, currency)}/year on annual plan
+                    </p>
+                  )}
+                </div>
+                {id === "personal" && (
+                  <a
+                    href={new URL("/register", cloudOrigin).href}
+                    className={`${button} bg-slate-800 hover:bg-slate-700`}
+                  >
+                    Get started free
+                  </a>
+                )}
+                {paid &&
+                  (price && (checkoutMode === "test" || checkoutMode === "live") ? (
+                    <a
+                      href={checkout.href}
+                      className={`${button} bg-indigo-600 hover:bg-indigo-500`}
+                    >
+                      {checkoutMode === "test" ? `Test ${name} checkout` : `Start ${name} Plan`}
+                    </a>
+                  ) : (
+                    <p className={`${button} bg-slate-900 text-slate-400`}>
+                      Checkout paused
+                    </p>
+                  ))}
+                {id === "enterprise" && (
+                  <p className={`${button} bg-slate-900 text-slate-400`}>
+                    Coming soon
+                  </p>
+                )}
+                {features.length > 0 && (
+                  <ul className="space-y-3 text-sm text-gray-300">
+                    {features.map((feature) => (
+                      <li className="flex items-center" key={feature}>
+                        <CheckIcon />
+                        {feature}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+                {id !== "enterprise" && catalog?.testCheckout && (
+                  <div className="mt-5 border-t border-slate-700 pt-4 text-sm leading-relaxed text-slate-400">
+                    <p className="mb-1 font-medium text-slate-300">
+                      Planned allowances per 30 days
+                    </p>
+                    <ul>
+                      {plannedAllowances[id].map((allowance) => (
+                        <li key={allowance}>{allowance}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </article>
+            );
+          })}
         </div>
       </div>
     </section>
