@@ -1,21 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import type { PricingCatalog, PricingCurrency as Currency, PricingCycle as Cycle } from "@/lib/pricingCatalog";
 
-type Currency = "USD" | "NGN" | "GHS" | "KES";
-type Cycle = "monthly" | "annual";
 type Plan = "personal" | "team" | "business" | "enterprise";
-
-export type PricingCatalog = {
-  offers: {
-    id: `${"team" | "business"}-${Cycle}`;
-    currency: Currency;
-    amountMinor: number;
-  }[];
-  markets: { currency: Currency; country: string | null; label: string }[];
-  testCheckout: boolean;
-  checkoutMode?: "test" | "live" | "off";
-};
 
 const plans: {
   id: Plan;
@@ -93,7 +81,7 @@ const CheckIcon = () => (
 
 export default function Pricing({
   cloudOrigin,
-  catalog,
+  catalog: initialCatalog,
   defaultCurrency,
 }: {
   cloudOrigin: string;
@@ -102,6 +90,38 @@ export default function Pricing({
 }) {
   const [cycle, setCycle] = useState<Cycle>("monthly");
   const [currency, setCurrency] = useState(defaultCurrency);
+  const [currentCatalog, setCurrentCatalog] = useState<PricingCatalog | null>(null);
+  const catalog = currentCatalog ?? initialCatalog;
+
+  useEffect(() => {
+    const controller = new AbortController();
+    let loading = false;
+    async function refresh() {
+      if (loading || document.visibilityState !== "visible") return;
+      loading = true;
+      try {
+        const response = await fetch("/api/pricing/catalog", { cache: "no-store", signal: controller.signal });
+        if (response.ok) {
+          const next = await response.json();
+          if (!controller.signal.aborted) setCurrentCatalog(next);
+        }
+      } catch {
+        // Keep the last displayed prices until the catalog is reachable.
+      } finally {
+        loading = false;
+      }
+    }
+    const timer = window.setInterval(refresh, 5_000);
+    window.addEventListener("focus", refresh);
+    document.addEventListener("visibilitychange", refresh);
+    return () => {
+      controller.abort();
+      window.clearInterval(timer);
+      window.removeEventListener("focus", refresh);
+      document.removeEventListener("visibilitychange", refresh);
+    };
+  }, []);
+
   const yearly = cycle === "annual";
   const checkoutMode = catalog?.checkoutMode ?? (catalog?.testCheckout ? "test" : "off");
 
@@ -187,6 +207,7 @@ export default function Pricing({
               plan: id,
               billing: cycle,
               currency,
+              ...(price && { price: String(price.amountMinor) }),
             }).toString();
             const button =
               "mb-6 block w-full rounded-lg px-4 py-3 text-center text-sm font-medium focus-visible:outline-2 focus-visible:outline-indigo-300";
