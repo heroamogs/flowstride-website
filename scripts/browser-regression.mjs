@@ -148,7 +148,7 @@ for (const [name, engine] of Object.entries({chromium, firefox, webkit})) {
           } else {
             const name = mode === 'live' ? 'Start Team Plan' : 'Test Team checkout';
             const href = await team.getByRole('link', { name, exact: true }).getAttribute('href');
-            assert.equal(href, catalogOrigin + '/billing/checkout?plan=team&billing=annual&currency=NGN');
+            assert.equal(href, catalogOrigin + '/billing/checkout?plan=team&billing=annual&currency=NGN&price=42050000');
           }
         }
         assert.equal((await context.request.get(origin + '/not-a-real-route')).status(), 404);
