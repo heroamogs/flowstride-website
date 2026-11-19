@@ -15,6 +15,52 @@ const { chromium, firefox, webkit } = createRequire(path.join(path.resolve(tools
 let origin, server, child, output = '';
 let catalogServer, catalogOrigin, checkoutMode = 'off';
 
+// Amounts in minor units. The GHS fixture also exercises fractional display.
+const pricingMarkets = [
+  { currency:'USD', country:null, label:'US Dollar', team:2_900, business:12_900 },
+  { currency:'NGN', country:'NG', label:'Nigerian Naira', team:4_205_000, business:18_705_000 },
+  { currency:'GHS', country:'GH', label:'Ghanaian Cedi', team:43_525, business:193_575 },
+  { currency:'KES', country:'KE', label:'Kenyan Shilling', team:377_000, business:1_677_000 },
+];
+const paidPlans = ['Team', 'Business'];
+const billingTerms = [
+  { cycle:'monthly', button:'Monthly', unit:'month', multiplier:1 },
+  { cycle:'annual', button:'Yearly', unit:'year', multiplier:10 },
+];
+const offers = pricingMarkets.flatMap(market => paidPlans.flatMap(name => {
+  const plan = name.toLowerCase();
+  return billingTerms.map(({cycle, multiplier}) => ({
+    id:`${plan}-${cycle}`, currency:market.currency, amountMinor:market[plan] * multiplier,
+  }));
+}));
+
+async function checkPaidCards(page, mode, market, term) {
+  const format = new Intl.NumberFormat('en-US', {
+    style:'currency', currency:market.currency, currencyDisplay:'narrowSymbol', minimumFractionDigits:0,
+  });
+  for (const name of paidPlans) {
+    const plan = name.toLowerCase();
+    const amountMinor = market[plan] * term.multiplier;
+    const description = `${market.currency} ${name} ${term.cycle} (${mode})`;
+    const card = page.getByRole('article', { name, exact:true });
+    assert(await card.getByText(format.format(amountMinor / 100), { exact:true }).isVisible(), description);
+    assert(await card.getByText(`/ ${term.unit}`, { exact:true }).isVisible(), description);
+    if (mode === 'off') {
+      assert(await card.getByText('Checkout paused', { exact:true }).isVisible(), description);
+      assert.equal(await card.getByRole('link').count(), 0, description);
+    } else {
+      const label = mode === 'live' ? `Start ${name} Plan` : `Test ${name} checkout`;
+      const link = card.getByRole('link', { name:label, exact:true });
+      assert(await link.isVisible(), description);
+      const checkout = new URL(await link.getAttribute('href'));
+      assert.equal(checkout.origin + checkout.pathname, catalogOrigin + '/billing/checkout', description);
+      assert.deepEqual(Object.fromEntries(checkout.searchParams), {
+        plan, billing:term.cycle, currency:market.currency, price:String(amountMinor),
+      }, description);
+    }
+  }
+}
+
 before(async () => {
   if (docs) {
     const dist = path.join(root, '.vitepress/dist');
@@ -41,13 +87,8 @@ before(async () => {
       response.end(JSON.stringify({
         checkoutMode,
         testCheckout: checkoutMode === 'test',
-        markets: [{ currency: 'NGN', country: 'NG', label: 'Nigerian Naira' }],
-        offers: [
-          { id: 'team-monthly', currency: 'NGN', amountMinor: 4_205_000 },
-          { id: 'team-annual', currency: 'NGN', amountMinor: 42_050_000 },
-          { id: 'business-monthly', currency: 'NGN', amountMinor: 18_705_000 },
-          { id: 'business-annual', currency: 'NGN', amountMinor: 187_050_000 },
-        ],
+        markets: pricingMarkets.map(({ currency, country, label }) => ({ currency, country, label })),
+        offers,
       }));
     });
     catalogServer.listen(0, '127.0.0.1');
@@ -103,19 +144,37 @@ for (const [name, engine] of Object.entries({chromium, firefox, webkit})) {
         await page.getByRole('switch').first().click();
         await page.waitForFunction(() => document.documentElement.classList.contains('dark'));
       } else {
-        assert.match(await page.title(), /Flowstride/);
+        assert.equal(await page.title(), 'Flowstride | Browser and API testing');
+        const command = 'npm install --save-dev flowstride';
+        assert(await page.getByText(command, {exact:true}).isVisible());
         await page.getByRole('button', {name:'Copy', exact:true}).click();
-        await page.waitForFunction(() => window.__copied === 'npm install -g flowstride');
-        assert.equal(await page.locator('a[href="https://github.com/heroamogs/flowstride-os"]').count() > 0, true);
+        await page.waitForFunction(expected => window.__copied === expected, command);
+        const githubLinks = page.getByRole('link', {name:'GitHub', exact:true});
+        assert(await githubLinks.count() > 0);
+        for (const link of await githubLinks.all()) {
+          assert.equal(await link.getAttribute('href'), 'https://github.com/heroamogs/flowstride');
+        }
+        await page.getByRole('link', {name:'Explore the 2.0 preview', exact:true}).click();
+        await page.waitForURL(url => url.hash === '#flowstride-2');
+        const preview = page.locator('#flowstride-2');
+        assert(await preview.getByText('browse-catalog.flow', {exact:true}).isVisible());
+        assert.match(await preview.innerText(), /npx flowstride init\s+npx flowstride run/);
+        await preview.getByText('Already have a Flowstride project?', {exact:true}).click();
+        assert.match(await preview.innerText(), /npx flowstride init --practice\s+cd \.flowstride\/practice\s+npx flowstride run/);
+        assert.match(await preview.getByRole('link', {name:'Read the 2.0 practice guide'}).getAttribute('href'), /\/examples\/practice-app\/README\.md$/);
         // Image optimization still serves the existing local image after Next/sharp updates.
         const image = await context.request.get(origin + '/_next/image?url=%2Flogo.png&w=64&q=75');
         assert.equal(image.status(), 200); assert.match(image.headers()['content-type'], /^image\//);
         const denied = await context.request.get(origin + '/_next/image?url=http%3A%2F%2F127.0.0.1%3A1%2Fprivate&w=64&q=75');
         assert.equal(denied.status(), 400);
         assert((await page.goto(origin + '/pricing')).ok());
+        assert(await page.getByRole('heading', {level:1, name:'Flowstride Pro pricing'}).isVisible());
+        await page.getByRole('navigation').getByRole('link', {name:'Features', exact:true}).click();
+        await page.waitForURL(url => url.pathname === '/' && url.hash === '#features');
+        await page.locator('#features h2').waitFor();
+        await page.goto(origin + '/pricing');
         await page.getByText('Personal', {exact:true}).waitFor();
         const team = page.getByRole('article', { name: 'Team', exact: true });
-        const business = page.getByRole('article', { name: 'Business', exact: true });
         const plannedAllowances = [
           ['Personal', '1,000 runs reported to Cloud', '200 FlowMail OTP requests'],
           ['Team', '20,000 runs reported to Cloud', '10,000 FlowMail OTP requests'],
@@ -124,13 +183,16 @@ for (const [name, engine] of Object.entries({chromium, firefox, webkit})) {
         for (const mode of ['off', 'test', 'live']) {
           checkoutMode = mode;
           assert((await page.reload()).ok());
-          await page.getByLabel('Currency', { exact: true }).selectOption('NGN');
-          assert(await team.getByText('₦42,050', { exact: true }).isVisible());
-          assert(await business.getByText('₦187,050', { exact: true }).isVisible());
-          await page.getByRole('button', { name: 'Yearly', exact: true }).click();
-          assert(await team.getByText('₦420,500', { exact: true }).isVisible());
-          assert(await business.getByText('₦1,870,500', { exact: true }).isVisible());
-          assert(await team.getByText('Save ₦84,100/year on annual plan', { exact: true }).isVisible());
+          for (const market of pricingMarkets) {
+            await page.getByLabel('Currency', { exact:true }).selectOption(market.currency);
+            for (const term of billingTerms) {
+              await page.getByRole('button', { name:term.button, exact:true }).click();
+              await checkPaidCards(page, mode, market, term);
+            }
+            if (market.currency === 'NGN') {
+              assert(await team.getByText('Save ₦84,100/year on annual plan', { exact: true }).isVisible());
+            }
+          }
           assert.equal(await page.getByText(/Test Mode pricing preview|Checkout uses Flutterwave test payments/i).count(), 0);
           for (const [plan, runs, otpRequests] of plannedAllowances) {
             const card = page.getByRole('article', { name: plan, exact: true });
@@ -140,22 +202,20 @@ for (const [name, engine] of Object.entries({chromium, firefox, webkit})) {
           }
           const enterprise = page.getByRole('article', { name: 'Enterprise', exact: true });
           assert.equal(await enterprise.getByText('Planned allowances per 30 days', { exact: true }).count(), 0);
-          if (mode === 'off') {
-            for (const card of [team, business]) {
-              assert(await card.getByText('Checkout paused', { exact: true }).isVisible());
-              assert.equal(await card.getByRole('link').count(), 0);
-            }
-          } else {
-            const name = mode === 'live' ? 'Start Team Plan' : 'Test Team checkout';
-            const href = await team.getByRole('link', { name, exact: true }).getAttribute('href');
-            assert.equal(href, catalogOrigin + '/billing/checkout?plan=team&billing=annual&currency=NGN&price=42050000');
-          }
         }
         assert.equal((await context.request.get(origin + '/not-a-real-route')).status(), 404);
       }
       await page.setViewportSize({width:390,height:844});
       assert((await page.goto(origin)).ok()); await page.locator('h1').first().waitFor();
       assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), 'Mobile layout overflows horizontally');
+      if (!docs) {
+        const navigation = page.getByRole('navigation');
+        await navigation.getByRole('link', {name:'Pricing', exact:true}).click();
+        await page.waitForURL(url => url.pathname === '/pricing');
+        await navigation.getByRole('link', {name:'2.0 preview', exact:true}).click();
+        await page.waitForURL(url => url.pathname === '/' && url.hash === '#flowstride-2');
+        assert(await page.getByLabel('Catalog test source').isVisible());
+      }
       const evidence = path.join(root, 'test-results'); fs.mkdirSync(evidence, {recursive:true});
       await page.screenshot({path:path.join(evidence, `${name}-mobile.png`), fullPage:true});
       assert.deepEqual(errors, [], 'Client rendering or hydration errors');

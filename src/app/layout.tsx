@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Flowstride OS | Human-Readable E2E Testing",
-  description: "The next-generation, BDD-flavored testing framework",
+  title: "Flowstride | Browser and API testing",
+  description: "Write readable .flow tests for browsers and APIs. Explore the Flowstride 2.0 preview, from the local practice app to JavaScript and TypeScript helpers.",
 };
 
 export default function RootLayout({

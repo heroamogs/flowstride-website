@@ -146,11 +146,10 @@ export default function CallToAction() {
               {/* Text */}
               <div>
                 <h3 className="text-2xl md:text-3xl font-bold text-white mb-2">
-                  Stop writing tests nobody can read.
+                  Run your first Flowstride test
                 </h3>
                 <p className="text-gray-300 text-sm md:text-base">
-                  Build faster. Debug smarter. Automate confidently with
-                  Flowstride.
+                  Install the current open-source release and follow the setup guide for your project.
                 </p>
               </div>
             </div>
@@ -162,7 +161,7 @@ export default function CallToAction() {
                 target="_blank"
                 className="w-full sm:w-auto px-8 py-3 bg-primary hover:bg-primary/90 text-white rounded-lg font-medium transition-colors flex items-center justify-center gap-2 cursor-pointer"
               >
-                Get Started
+                View on npm
                 <svg
                   className="w-4 h-4"
                   fill="none"
@@ -186,7 +185,7 @@ export default function CallToAction() {
                 View Docs
               </a>
               <a
-                href="https://github.com/heroamogs/flowstride-os"
+                href="https://github.com/heroamogs/flowstride"
                 target="_blank"
                 rel="noreferrer"
                 className="flex items-center gap-2 text-sm font-medium text-gray-300 hover:text-white bg-gray-900 border border-gray-700 hover:border-gray-500 transition-all px-3 py-1.5 rounded-md"

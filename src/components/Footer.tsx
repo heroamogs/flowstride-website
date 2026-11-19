@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear(); // Dynamically pulls 2026
@@ -23,7 +24,7 @@ export default function Footer() {
               </span>
             </div>
             <p className="text-gray-400 text-sm leading-relaxed">
-              The next-gen testing framework for modern teams.
+              Open-source browser and API testing with readable .flow files.
             </p>
           </div>
 
@@ -33,14 +34,14 @@ export default function Footer() {
             <div className="flex flex-col gap-4">
               <h4 className="text-white font-semibold text-sm">Product</h4>
               <ul className="flex flex-col gap-3 text-sm text-gray-400">
-                <li className="hover:text-white transition-colors cursor-pointer">
-                  Features
+                <li>
+                  <Link href="/#features" className="hover:text-white">Features</Link>
                 </li>
-                <li className="hover:text-white transition-colors cursor-pointer">
-                  Pricing
+                <li>
+                  <Link href="/pricing" className="hover:text-white">Pricing</Link>
                 </li>
-                <li className="hover:text-white transition-colors cursor-pointer">
-                  Changelog
+                <li>
+                  <Link href="/#flowstride-2" className="hover:text-white">Flowstride 2.0 preview</Link>
                 </li>
                 <li className="hover:text-white transition-colors cursor-pointer">
                   Roadmap
@@ -65,8 +66,8 @@ export default function Footer() {
                 <li className="hover:text-white transition-colors cursor-pointer">
                   Blog
                 </li>
-                <li className="hover:text-white transition-colors cursor-pointer">
-                  Examples
+                <li>
+                  <a href="https://docs.flowstride.io/guide/working-examples.html" className="hover:text-white">Examples</a>
                 </li>
                 <li className="hover:text-white transition-colors cursor-pointer">
                   Videos
@@ -80,7 +81,7 @@ export default function Footer() {
               <ul className="flex flex-col gap-3 text-sm text-gray-400">
                 <li>
                   <a
-                    href="https://github.com/heroamogs/flowstride-os"
+                    href="https://github.com/heroamogs/flowstride"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="hover:text-white transition-colors cursor-pointer"

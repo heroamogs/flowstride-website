@@ -1,9 +1,9 @@
 export default function Features() {
   const features = [
     {
-      title: "Semantic Selector Engine",
+      title: "Readable browser steps",
       description:
-        "Ditch fragile XPaths/complex CSS. Our engine translates human words into robust selectors.",
+        "Find a field by its label or a button by its text. Use an explicit selector when you need to target a particular row or control.",
       icon: (
         <svg
           className="w-6 h-6 text-primary"
@@ -21,9 +21,9 @@ export default function Features() {
       ),
     },
     {
-      title: "Environment-First Orchestration",
+      title: "JavaScript and TypeScript helpers",
       description:
-        "Run the exact same test script across local, staging, and production environments with zero code changes.",
+        "Import a function from your helpers folder and call it inside a .flow file. The practice catalog uses a TypeScript helper to check prices on all 50 cars.",
       icon: (
         <svg
           className="w-6 h-6 text-primary"
@@ -41,9 +41,9 @@ export default function Features() {
       ),
     },
     {
-      title: "Unified Testing",
+      title: "API and UI in one scenario",
       description:
-        "Combine UI, API and browser-game checks in readable flows.",
+        "Create an account and assign a role through the API. Then sign in through the browser and verify that the same account can approve bookings.",
       icon: (
         <svg
           className="w-6 h-6 text-primary"
@@ -61,9 +61,9 @@ export default function Features() {
       ),
     },
     {
-      title: "Human Readable",
+      title: "Handoffs between tests",
       description:
-        "Readable flows with native canvas input and optional game-state assertions.",
+        "Watch the admin create a user and assign a role in the browser. The sign-in flow waits through the admin’s retry and receives the account only after the admin flow passes.",
       icon: (
         <svg
           className="w-6 h-6 text-primary"
@@ -81,9 +81,9 @@ export default function Features() {
       ),
     },
     {
-      title: "CI/CD Ready",
+      title: "Fixture setup and cleanup",
       description:
-        "Run flows with native headless CI, exit codes, JSON/JUnit reports and retained evidence.",
+        "Give each attempt fresh test data and register cleanup. In the handoff example, Flowstride removes the failed attempt’s account and keeps the successful one until the sign-in test finishes.",
       icon: (
         <svg
           className="w-6 h-6 text-primary"
@@ -101,9 +101,9 @@ export default function Features() {
       ),
     },
     {
-      title: "Rich Reporting",
+      title: "Headless CI and reports",
       description:
-        "Detailed logs, screenshots, videos, reports and test cases that help you ship faster.",
+        "Use npx flowstride run --ci for a headless run with JSON and JUnit results. Use npx flowstride report later to open saved results.",
       icon: (
         <svg
           className="w-6 h-6 text-primary"
@@ -123,12 +123,12 @@ export default function Features() {
   ];
 
   return (
-    <section className="bg-black py-24 border-b border-gray-800">
+    <section id="features" className="scroll-mt-16 bg-black py-24 border-b border-gray-800">
       <div className="max-w-7xl mx-auto px-6">
         {/* Header */}
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-            Built for modern applications.
+            Inside the Flowstride 2.0 preview
           </h2>
         </div>
 

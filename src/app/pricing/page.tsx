@@ -3,8 +3,8 @@ import Pricing from "@/components/Pricing";
 import { cloudPricingOrigin, loadPricingCatalog } from "@/lib/pricingCatalog";
 
 export const metadata = {
-  title: "Pricing | Flowstride Cloud",
-  description: "Compare Flowstride Cloud plans and see monthly and yearly workspace pricing.",
+  title: "Pricing | Flowstride Pro",
+  description: "Compare Personal, Team, and Business workspace plans for Flowstride Pro. See monthly and yearly pricing and manage billing in Flowstride Cloud.",
 };
 
 export default async function PricingRoute() {

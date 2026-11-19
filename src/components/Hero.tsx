@@ -3,12 +3,14 @@
 import { useState } from "react";
 import Image from "next/image";
 
+const installCommand = "npm install --save-dev flowstride";
+
 export default function Hero() {
   const [isCopied, setIsCopied] = useState(false);
 
   const handleCopy = async () => {
     try {
-      await navigator.clipboard.writeText("npm install -g flowstride");
+      await navigator.clipboard.writeText(installCommand);
       setIsCopied(true);
       setTimeout(() => setIsCopied(false), 2000);
     } catch (err) {
@@ -24,46 +26,40 @@ export default function Hero() {
       <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center relative z-10">
         {/* Left Column: Copy & CTAs */}
         <div className="space-y-8">
-          <div className="inline-flex items-center rounded-full border border-primary/40 bg-primary/10 px-3 py-1 text-xs font-semibold text-primary tracking-wide uppercase">
-            Next-Gen QA Automation
-          </div>
-
           <h1 className="text-5xl md:text-6xl font-bold tracking-tight leading-[1.1]">
-            Uncompromising power.
-            <br />
-            <span className="text-primary">Human-readable simplicity.</span>
+            Browser and API tests
+            <span className="block text-violet-400">your team can read.</span>
           </h1>
 
           <p className="text-lg text-gray-400 max-w-lg">
-            The next-gen testing framework that lets your team automate in
-            minutes, not hours.
+            Write your test steps in a <code>.flow</code> file. Follow them in
+            the live dashboard as they run, or run the same tests headlessly in CI.
           </p>
 
           {/* Buttons */}
           <div className="flex flex-col sm:flex-row gap-4">
             <a
-              href="https://www.npmjs.com/package/flowstride"
+              href="https://docs.flowstride.io/guide/getting-started.html"
               target="_blank"
               rel="noopener noreferrer"
               className="bg-primary hover:bg-primary-light transition-colors text-white px-6 py-3 rounded-md font-semibold flex items-center justify-center gap-2"
             >
-              Get Started <span aria-hidden="true">&rarr;</span>
+              Get started <span aria-hidden="true">&rarr;</span>
             </a>
             <a
-              href="https://docs.flowstride.io/guide/getting-started.html"
-              target="_blank"
-              rel="noopener noreferrer"
+              href="#flowstride-2"
               className="bg-transparent border border-gray-700 hover:bg-gray-900 transition-colors text-white px-6 py-3 rounded-md font-semibold inline-block text-center"
             >
-              View Documentation
+              Explore the 2.0 preview
             </a>
           </div>
 
           {/* Install Command */}
           <div className="flex flex-col gap-4 max-w-md">
+            <p className="text-sm text-gray-400">Install the stable release from npm in your project.</p>
             <div className="flex items-center justify-between bg-gray-950 border border-gray-800 rounded-md p-3">
               <code className="text-sm text-gray-300 font-mono">
-                npm install -g flowstride
+                {installCommand}
               </code>
               <button
                 onClick={handleCopy}
@@ -111,25 +107,12 @@ export default function Hero() {
               </button>
             </div>
 
-            {/* Mini Features */}
-            <div className="flex items-center gap-4 text-xs text-gray-500 font-medium">
-              <span className="flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-gray-700"></span>{" "}
-                AI-Powered
-              </span>
-              <span className="flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-gray-700"></span>{" "}
-                WAF-Proof
-              </span>
-              <span className="flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-gray-700"></span>{" "}
-                Unified
-              </span>
-              <span className="flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-gray-700"></span> Open
-                Source (MIT)
-              </span>
-            </div>
+            <a
+              href="https://marketplace.visualstudio.com/items?itemName=flowstride.flowstride-vscode"
+              className="w-fit text-sm text-violet-300 underline underline-offset-4 hover:text-white"
+            >
+              Get the Flowstride Automation extension for VS Code
+            </a>
           </div>
         </div>
 
@@ -139,8 +122,9 @@ export default function Hero() {
             src="/hero-image.png"
             alt="Flowstride QA Automation Dashboard and Code Editor"
             fill
+            sizes="(min-width: 1280px) 720px, (min-width: 1024px) 55vw, 100vw"
             className="object-contain"
-            priority
+            preload
           />
         </div>
       </div>

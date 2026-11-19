@@ -134,10 +134,11 @@ export default function Pricing({
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mx-auto mb-12 max-w-3xl text-center">
           <h1 className="mb-4 text-3xl font-bold tracking-tight md:text-5xl">
-            Flowstride Cloud pricing
+            Flowstride Pro pricing
           </h1>
           <p className="text-lg text-gray-400">
-            Start free and upgrade when your workspace needs more capacity.
+            Run open-source Flowstride locally for free. Connect Flowstride Pro to a
+            Flowstride Cloud workspace to share test results and manage your plan.
           </p>
           {catalog && (
             <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
