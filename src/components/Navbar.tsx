@@ -23,41 +23,33 @@ export default function Navbar() {
         </Link>
 
         {/* Middle: Navigation Links */}
-        <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-gray-300">
-          <Link href="#features" className="hover:text-white transition-colors">
+        <nav className="flex items-center gap-4 md:gap-6 text-sm font-medium text-gray-300">
+          <Link href="/#features" className="hidden md:inline hover:text-white transition-colors">
             Features
+          </Link>
+          <Link href="/#flowstride-2" className="hover:text-white transition-colors">
+            2.0 preview
           </Link>
           <Link
             href="https://docs.flowstride.io/guide/getting-started.html"
             target="_blank"
-            className="hover:text-white transition-colors"
+            className="hidden md:inline hover:text-white transition-colors"
           >
             Docs
           </Link>
           <Link
-            // href="https://cloud.flowstride.io/register"
             href="/pricing"
-            target="_blank"
             className="hover:text-white transition-colors"
           >
             Pricing
           </Link>
-          {/* <Link href="#blog" className="hover:text-white transition-colors">
-            Blog
-          </Link>
-          <Link
-            href="#changelog"
-            className="hover:text-white transition-colors"
-          >
-            Changelog
-          </Link> */}
         </nav>
 
         {/* Right: Actions */}
         <div className="hidden md:flex items-center gap-5">
           {/* GitHub Button */}
           <a
-            href="https://github.com/heroamogs/flowstride-os"
+            href="https://github.com/heroamogs/flowstride"
             target="_blank"
             rel="noreferrer"
             className="flex items-center gap-2 text-sm font-medium text-gray-300 hover:text-white bg-gray-900 border border-gray-700 hover:border-gray-500 transition-all px-3 py-1.5 rounded-md"

@@ -1,5 +1,5 @@
 import Hero from "@/components/Hero";
-import Comparison from "@/components/Comparison";
+import ReleasePreview from "@/components/ReleasePreview";
 import Features from "@/components/Features";
 import UnifiedTesting from "@/components/UnifiedTesting";
 import CallToAction from "@/components/CallToAction";
@@ -9,7 +9,7 @@ export default function Home() {
   return (
     <main>
       <Hero />
-      <Comparison />
+      <ReleasePreview />
       <Features />
       <UnifiedTesting />
       <CallToAction />

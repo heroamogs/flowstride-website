@@ -9,9 +9,9 @@ export default function UnifiedTesting() {
 
   const features = [
     {
-      title: "Real-Time Execution",
+      title: "Live execution",
       description:
-        "Watch your semantic flows execute in a live browser environment. See exactly what your test sees, step-by-step, as it happens in real time.",
+        "Running npx flowstride run opens the live dashboard. Select a flow to follow its browser steps and see which tests are waiting, running, or complete.",
       image: "/dashboard.png",
     },
     {
@@ -27,9 +27,9 @@ export default function UnifiedTesting() {
       image: "/logsview-on-api-playground.png",
     },
     {
-      title: "Executive-Ready Reports",
+      title: "Run reports",
       description:
-        "Generate clean, high-level execution summaries. Share multi-flow analysis that engineers, QA, and product managers can instantly read and trust.",
+        "Review the results for each flow and inspect the steps behind a failure. In the 2.0 preview, npx flowstride report opens saved CI results.",
       image: "/flowstride-reports.png",
     },
     {
@@ -39,9 +39,9 @@ export default function UnifiedTesting() {
       image: "/report-with-step-diagnostics.png",
     },
     {
-      title: "Time-Travel Debugging",
+      title: "Step history",
       description:
-        "Click any step in your execution log to instantly rewind the browser. Inspect the historical visual and DOM state to see exactly what led to a failure.",
+        "Select a completed browser step to see its captured screen when available. Switch between attempts to see what changed after a retry.",
       image: "/viewing-historical-state.png",
     },
     {
@@ -91,11 +91,11 @@ export default function UnifiedTesting() {
         {/* Section Header */}
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-6">
-            One unified testing experience.
+            Follow a run in the dashboard
           </h2>
           <p className="text-gray-400 text-lg md:text-xl max-w-2xl mx-auto">
-            From live execution to executive reports, everything you need is in
-            one place. No more switching between fragmented tools.
+            Inspect browser steps, network activity, and saved evidence as you
+            trace a result back to the action that produced it.
           </p>
         </div>
 
